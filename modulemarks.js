@@ -32,8 +32,8 @@ if (Meteor.isClient) {
   }
 
   Template.scorePie.rendered = function(){
-    var score = 50;
-    var total = 50;
+    var score = 76;
+    var total = 40;
     
     var dataset=[
       {startA:angle(0), endA:angle(score)},
@@ -42,32 +42,38 @@ if (Meteor.isClient) {
     function angle(score){
         return 2*Math.PI*(total/100)*(score/100);
     };
-    
-    var self = this;
-    self.node = self.find("svg");
+
     //Width and height
     var width = 100,
         height = 100;
 
     // render
-    var color = d3.scale.category10();
+    var color = d3.scale.category20();
 
-    var vis = d3.select(".pie").append("svg:svg")
+    var svg = d3.select(".pie").append("svg:svg")
       .attr("width", width)
       .attr("height", height);
-    
     
     var arc = d3.svg.arc()
         .innerRadius(10)
         .outerRadius(30)
         .startAngle(function(d){return d.startA}) //converting from degs to radians
         .endAngle(function(d){return d.endA}); //just radians
-    
-    vis.append("path")
-        .data(dataset)
-        .attr("d", arc)
-        .attr("fill", function(d, i) { return color(i); })
+
+    var chartContainer = svg.append("g")
+        .attr('class', 'some_class')
         .attr("transform", "translate(" + (width/2) + "," + (height/2) + ")");
+
+    chartContainer.selectAll("path")
+      .data(dataset)
+      .enter()
+      .append("path")
+        
+        .attr("d", arc)
+        .attr("stroke", "white")
+        .attr("stroke-width", 0.5)
+        .attr("fill", function(d, i) { return color(i); });
+        
    
 
   }
