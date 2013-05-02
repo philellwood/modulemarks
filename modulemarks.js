@@ -10,11 +10,19 @@ if (Meteor.isClient) {
   };
 
   Template.calculate.events({
-    'change input' : function (e) {
+    'change .score' : function (e) {
       Assessments.update({_id:Assessments.findOne({assessment_id:this.assessment_id})._id},
       { $set:
         {
           score:e.srcElement.value
+        }
+      });
+    },
+    'change .worth' : function (e) {
+      Assessments.update({_id:Assessments.findOne({assessment_id:this.assessment_id})._id},
+      { $set:
+        {
+          worth:e.srcElement.value
         }
       });
     },
@@ -27,22 +35,8 @@ if (Meteor.isClient) {
     }
   });
 
-  Template.calculate.assessValue = function(){
-    return this.score * (this.worth/100);
-  }
-
-  Template.scorePie.rendered = function(){
-    var score = 76;
-    var total = 40;
-    
-    var dataset=[
-      {startA:angle(0), endA:angle(score)},
-      {startA:angle(score), endA:angle(100)}
-    ];
-    function angle(score){
-        return 2*Math.PI*(total/100)*(score/100);
-    };
-
+  Template.assessment.rendered = function(){
+    console.log(this.data);
     //Width and height
     var width = 100,
         height = 100;
@@ -50,9 +44,20 @@ if (Meteor.isClient) {
     // render
     var color = d3.scale.category20();
 
-    var svg = d3.select(".pie").append("svg:svg")
+    var svg = d3.select(this.find("svg"))
       .attr("width", width)
       .attr("height", height);
+
+    
+    var score = this.data.score;
+    var total = this.data.worth;
+    var dataset=[
+      {startA:angle(0), endA:angle(score)},
+      {startA:angle(score), endA:angle(100)}
+    ];
+    function angle(score){
+        return 2*Math.PI*(total/100)*(score/100);
+    };
     
     var arc = d3.svg.arc()
         .innerRadius(10)
@@ -61,7 +66,6 @@ if (Meteor.isClient) {
         .endAngle(function(d){return d.endA}); //just radians
 
     var chartContainer = svg.append("g")
-        .attr('class', 'some_class')
         .attr("transform", "translate(" + (width/2) + "," + (height/2) + ")");
 
     chartContainer.selectAll("path")
