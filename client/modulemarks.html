@@ -1,0 +1,35 @@
+<head>
+  <title>Module Marks</title>
+</head>
+
+<body>
+  
+  <div id="outer">
+    <div id="login" style="float:right">
+    {{loginButtons align="right"}}
+  </div>
+    {{> title}}
+    {{> calculate}}
+  </div>
+</body>
+
+<template name="title">
+  <h1>Module Marks</h1>
+</template>
+
+<template name="calculate">
+  {{#each assessments}}
+    {{> assessment}}
+  {{/each}}
+  <input id="newAssessment" type="button" value="+"/>
+</template>
+
+<template name="assessment">
+  <div class="assessment">
+    <input class="removeAssessment" type="button" value="x"/>
+    Assessment {{assessment_id}}:  <br>
+    What you got:<input type="text" class="score" value="{{score}}"/> <br>
+    What it was worth:<input type="text" class="worth" value="{{worth}}"/> 
+    <svg></svg>
+  </div>
+</template>
