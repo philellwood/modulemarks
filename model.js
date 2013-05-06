@@ -1,12 +1,13 @@
 Assessments = new Meteor.Collection('assessments');
 //{user_id:xxx, assessment_id:1, score:100, worth:100}
 Assessments.allow({
-  insert:function(assessment){
-    console.log(assessment);
-    return true;
+  insert:function(userId, doc){
+    return userId===Meteor.userId();
   },
-  update:function(assessment){
-    console.log(assessment);
-    return true;
+  update:function(userId, doc, fieldNames, modifier){
+    return userId===Meteor.userId();
+  },
+  remove:function(userId, doc){
+    return userId===Meteor.userId();
   }
 });

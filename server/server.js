@@ -1,3 +1,3 @@
 Meteor.publish("assessments", function(){
-  Assessments.find();
+  return Assessments.find({user_id:this.userId});
 });

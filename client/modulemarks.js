@@ -1,12 +1,12 @@
 
 Meteor.subscribe("assessments");
 Template.calculate.assessments = function () {
-  return Assessments.find({user_id:Meteor.userId()});
+  return Assessments.find();
 };
 
 Template.calculate.events({
   'change .score' : function (e) {
-    Assessments.update({_id:Assessments.findOne({assessment_id:this.assessment_id})._id},
+    Assessments.update({_id:this._id},
     { $set:
       {
         score:e.srcElement.value
@@ -14,7 +14,7 @@ Template.calculate.events({
     });
   },
   'change .worth' : function (e) {
-    Assessments.update({_id:Assessments.findOne({assessment_id:this.assessment_id})._id},
+    Assessments.update({_id:this._id},
     { $set:
       {
         worth:e.srcElement.value
@@ -23,7 +23,8 @@ Template.calculate.events({
   },
   'click #newAssessment' : function(e){
     var noOfAssessments = Assessments.find().count();
-    Assessments.insert({user_id:Meteor.userId(), assessment_id:noOfAssessments+1,score:12,worth:33});
+    console.log(noOfAssessments);
+    Assessments.insert({user_id:Meteor.userId(), assessment_id:noOfAssessments+1,score:"0",worth:"0"});
     // var newAssessmentNum = Meteor.users.findOne(
     //   {_id : Meteor.userId() }).profile.assessments.length+1;
 
@@ -37,12 +38,9 @@ Template.calculate.events({
     // );
   },
   'click .removeAssessment' : function(e){
-    Meteor.users.update(
-      {_id : Meteor.userId() },
-      {$pull:{"profile.assessments":{
-        assessment_id:this.assessment_id
-      }}}
-    );
+    console.log(this);
+    Assessments.remove({_id:this._id});
+  
   }
 });
 
