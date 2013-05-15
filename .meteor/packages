@@ -7,3 +7,5 @@ preserve-inputs
 d3
 accounts-password
 accounts-ui
+accounts-facebook
+accounts-twitter

@@ -1,10 +1,13 @@
 
 Meteor.subscribe("assessments");
-Template.calculate.assessments = function () {
+Meteor.startup(function(){
+  Session.setDefault('scoreShown',false);
+});
+Template.list.assessments = function () {
   return Assessments.find();
 };
 
-Template.calculate.events({
+Template.list.events({
   'change .score' : function (e) {
     Assessments.update({_id:this._id},
     { $set:
@@ -25,22 +28,14 @@ Template.calculate.events({
     var noOfAssessments = Assessments.find().count();
     console.log(noOfAssessments);
     Assessments.insert({user_id:Meteor.userId(), assessment_id:noOfAssessments+1,score:"0",worth:"0"});
-    // var newAssessmentNum = Meteor.users.findOne(
-    //   {_id : Meteor.userId() }).profile.assessments.length+1;
-
-    // Meteor.users.update(
-    //   {_id : Meteor.userId() },
-    //   {$push:{"profile.assessments":{
-    //     assessment_id:newAssessmentNum,
-    //     score:0,
-    //     worth:0
-    //   }}}
-    // );
   },
   'click .removeAssessment' : function(e){
     console.log(this);
     Assessments.remove({_id:this._id});
-  
+  },
+  'click #scoreNeeded' : function(e){
+    Session.set('scoreShown',true);
+    console.log(calculate().needed(70));
   }
 });
 
@@ -98,5 +93,65 @@ Template.assessment.rendered = function(){
   }
 };
 
+Template.result.show = function(){
+  return Session.get('scoreShown');
+};
+
+Template.result.rendered = function(){
+  //Width and height
+  var width = 600,
+      height = 200;
+
+  var data = [
+    calculate().needed(40),
+    calculate().needed(50),
+    calculate().needed(60),
+    calculate().needed(70)
+    ];
+console.log(calculate());
+  var color = d3.scale.category10();
+
+  var svg = d3.select(this.find("svg"))
+    .attr("width", width)
+    .attr("height", height);
+
+  svg.selectAll("rect")
+    .data(data)
+    .enter().append("rect")
+    .attr("y", function(d, i) { return i * 20; })
+    .attr("width", function(d) { return d * 5 + "px"; })
+    .attr("height", 20)
+    .attr("fill", function(d, i) { return color(i); });
+
+svg.selectAll("text")
+    .data(data)
+  .enter().append("text")
+    .attr("x", function(d) { return d * 5 + "px"; })
+    .attr("y", function(d,i) { return i * 20;  })
+    .attr("dx", -3) // padding-right
+    .attr("dy", ".35em") // vertical-align: middle
+    .attr("text-anchor", "end") // text-align: right
+    .text(String);
+};
+function calculate(){
+  var allAssessments = Assessments.find({user_id:Meteor.userId()}).fetch();
+  var totalScore = 0;
+  var totalWorth = 0;
+  for (var i = allAssessments.length - 1; i >= 0; i--) {
+    var a = allAssessments[i];
+    totalWorth += parseFloat(a.worth);
+    totalScore += a.score*(a.worth/100);
+  };
+  return {
+    totalScore:totalScore,
+    totalWorth:totalWorth,
+    needed:function(x){
+      var result = (x-totalScore)/((100-totalWorth)/100);
+      console.log(result);
+      return result;
+    }
+  };
+  
+}
 
 

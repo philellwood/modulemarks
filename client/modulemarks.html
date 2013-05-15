@@ -9,7 +9,8 @@
     {{loginButtons align="right"}}
   </div>
     {{> title}}
-    {{> calculate}}
+    {{> list}}
+    {{> result}}
   </div>
 </body>
 
@@ -17,11 +18,12 @@
   <h1>Module Marks</h1>
 </template>
 
-<template name="calculate">
+<template name="list">
   {{#each assessments}}
     {{> assessment}}
   {{/each}}
   <input id="newAssessment" type="button" value="+"/>
+  <input id="scoreNeeded" type="button" value=">"/>
 </template>
 
 <template name="assessment">
@@ -32,4 +34,13 @@
     What it was worth:<input type="text" class="worth" value="{{worth}}"/> 
     <svg></svg>
   </div>
+</template>
+
+<template name="result">
+  {{#if show}}
+    <div id="resultBox">
+      What you need:
+      <svg></svg>
+    </div>
+  {{/if}}
 </template>
