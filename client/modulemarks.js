@@ -35,7 +35,6 @@ Template.list.events({
   },
   'click #scoreNeeded' : function(e){
     Session.set('scoreShown',true);
-    console.log(calculate().needed(70));
   }
 });
 
@@ -52,7 +51,7 @@ Template.assessment.rendered = function(){
     .attr("width", width)
     .attr("height", height);
 
-  
+
   var score = this.data.score;
   var total = this.data.worth;
   var dataset=[
@@ -61,8 +60,8 @@ Template.assessment.rendered = function(){
   ];
   function angle(score){
       return 2*Math.PI*(total/100)*(score/100);
-  };
-  
+  }
+
   var arc = d3.svg.arc()
       .innerRadius(10)
       .outerRadius(30)
@@ -84,7 +83,7 @@ Template.assessment.rendered = function(){
       .attr("stroke", "white")
       .attr("stroke-width", 0.5)
       .attr("fill", function(d, i) { return color(i); });
-      
+
   function arcTween(b) {
       var i = d3.interpolate({value: b.previous}, b);
       return function(t) {
@@ -93,65 +92,35 @@ Template.assessment.rendered = function(){
   }
 };
 
-Template.result.show = function(){
-  return Session.get('scoreShown');
+Template.result.grades = function(){
+  var worthData = calculateWorth();
+  return [
+  {grade:70, needed:calculateNeeded(70,worthData.totalScore,worthData.totalWorth)},
+  {grade:60, needed:calculateNeeded(60,worthData.totalScore,worthData.totalWorth)},
+  {grade:50, needed:calculateNeeded(50,worthData.totalScore,worthData.totalWorth)},
+  {grade:40, needed:calculateNeeded(40,worthData.totalScore,worthData.totalWorth)}
+  ];
 };
 
-Template.result.rendered = function(){
-  //Width and height
-  var width = 600,
-      height = 200;
-
-  var data = [
-    calculate().needed(40),
-    calculate().needed(50),
-    calculate().needed(60),
-    calculate().needed(70)
-    ];
-console.log(calculate());
-  var color = d3.scale.category10();
-
-  var svg = d3.select(this.find("svg"))
-    .attr("width", width)
-    .attr("height", height);
-
-  svg.selectAll("rect")
-    .data(data)
-    .enter().append("rect")
-    .attr("y", function(d, i) { return i * 20; })
-    .attr("width", function(d) { return d * 5 + "px"; })
-    .attr("height", 20)
-    .attr("fill", function(d, i) { return color(i); });
-
-svg.selectAll("text")
-    .data(data)
-  .enter().append("text")
-    .attr("x", function(d) { return d * 5 + "px"; })
-    .attr("y", function(d,i) { return i * 20;  })
-    .attr("dx", -3) // padding-right
-    .attr("dy", ".35em") // vertical-align: middle
-    .attr("text-anchor", "end") // text-align: right
-    .text(String);
-};
-function calculate(){
+function calculateNeeded(grade,score,worth){
+  var result = ((grade-score)/((100-worth)/100)).toFixed(2);
+  console.log(result);
+  return result;
+}
+function calculateWorth(){
   var allAssessments = Assessments.find({user_id:Meteor.userId()}).fetch();
+  console.log(allAssessments);
   var totalScore = 0;
   var totalWorth = 0;
   for (var i = allAssessments.length - 1; i >= 0; i--) {
     var a = allAssessments[i];
     totalWorth += parseFloat(a.worth);
     totalScore += a.score*(a.worth/100);
-  };
+  }
   return {
     totalScore:totalScore,
-    totalWorth:totalWorth,
-    needed:function(x){
-      var result = (x-totalScore)/((100-totalWorth)/100);
-      console.log(result);
-      return result;
-    }
+    totalWorth:totalWorth
   };
-  
 }
 
 

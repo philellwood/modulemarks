@@ -37,10 +37,12 @@
 </template>
 
 <template name="result">
-  {{#if show}}
+  
     <div id="resultBox">
-      What you need:
-      <svg></svg>
+      
+      {{#each grades}}
+        <p>For {{grade}}%, you need {{needed}}%.</p> 
+      {{/each}}
     </div>
-  {{/if}}
+  
 </template>
