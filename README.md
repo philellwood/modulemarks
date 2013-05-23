@@ -1,5 +1,5 @@
 #Module Marks
-This is the initial version of a Module mark calculator. Users input their marks for a set of assessments, and the calculator will tell you what you need.
+This is the initial version of a Module mark calculator. Users input their marks for a set of assessments, and the calculator will tell you what you need. Available at [modulemarks.meteor.com](http://modulemarks.meteor.com).
 
 ##What it really is
 I'm using this as an opportunity to catch up with new technologies, the project already uses Meteor.js and D3.js, which I'm having a lot of fun learning.
