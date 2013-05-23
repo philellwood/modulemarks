@@ -103,9 +103,9 @@ Template.result.grades = function(){
 };
 
 function calculateNeeded(grade,score,worth){
-  var result = ((grade-score)/((100-worth)/100)).toFixed(2);
+  var result = ((grade-score)/((100-worth)/100));
   console.log(result);
-  return result;
+  return formatResult(result);
 }
 function calculateWorth(){
   var allAssessments = Assessments.find({user_id:Meteor.userId()}).fetch();
@@ -121,6 +121,18 @@ function calculateWorth(){
     totalScore:totalScore,
     totalWorth:totalWorth
   };
+}
+
+function formatResult(result){
+  var formatted = "";
+  if (result>100){
+    formatted = "you need over 100% :(";
+  }else if(result<0){
+    formatted = "you've already got this grade, Yay!";
+  }else{
+    formatted = "you need " + result.toFixed(2) + "%.";
+  }
+  return formatted;
 }
 
 
