@@ -15,12 +15,17 @@
 <body>
   
   <div id="outer">
-    <div id="login" style="float:right">
-    {{loginButtons align="right"}}
+    <div id="inner">
+      <div id="login" style="float:right">
+        {{loginButtons align="right"}}
+      </div>
+      {{> title}}
+      {{> list}}
+      {{> result}}
+    </div>
   </div>
-    {{> title}}
-    {{> list}}
-    {{> result}}
+  <div id="footer">
+    {{> footer}}
   </div>
 </body>
 
@@ -54,4 +59,7 @@
       {{/each}}
     </div>
   
+</template>
+<template name="footer">
+  <a href="mailto:phil@philellwood.com">Send Feedback</a>
 </template>
